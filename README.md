@@ -1,17 +1,21 @@
-# Complete Workflow: AI-Powered Voice Cloning Detection System
+# Complete Workflow: SwarSatya (स्वरसत्य) - AI-Powered Voice Cloning Detection
 
 ## Overview
 
-This document traces a complete user journey through all five architectural zones, showing every step from initial enrollment to real-time fraud detection during a live call.
+This document traces a complete user journey through all five architectural zones of **SwarSatya**, showing every step from initial enrollment to real-time fraud detection during a live call.
+
+**Project**: SwarSatya (स्वरसत्य - "Voice Truth")  
+**Hackathon**: Smart India Hackathon 2026  
+**Theme**: Blockchain & Cybersecurity
 
 ---
 
 ## Phase 0: System Initialization (One-Time Setup)
 
-### Step 0.1: User Downloads Mobile App
-- **Platform**: Android (Kotlin + Python ONNX Runtime) or iOS (Swift + CoreML)
-- **Action**: User installs "VoiceShield" app from Play Store / App Store
-- **Tech**: React Native / Flutter frontend, Python backend services
+### Step 0.1: User Downloads SwarSatya App
+- **Platform**: Android (Kotlin + Python via Chaquopy)
+- **Action**: User installs "SwarSatya" app from Play Store
+- **Tech**: Jetpack Compose UI, Python backend services, ONNX Runtime Mobile
 
 ### Step 0.2: App Requests Permissions
 ```
@@ -24,18 +28,18 @@ Permissions Requested:
 
 ### Step 0.3: Blockchain Wallet Generation
 - **Action**: App generates a new decentralized identity (DID)
-- **Tech**: `web3.py` + `did:key` method
+- **Tech**: `web3.py` + `eth-account` for key management
 - **Output**: 
-  - Public Key: `did:key:z6MkhaXgBZDvotDkWL5TnGH4xvQR...`
-  - Private Key: Stored in Android Keystore / iOS Keychain (never leaves device)
-- **Blockchain**: Hyperledger Fabric channel or Polygon CDK L2
+  - Public Key: `0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb...`
+  - Private Key: Stored in Android Keystore (never leaves device)
+- **Blockchain**: Polygon Mumbai Testnet
 
 ---
 
 ## Phase 1: Voice Enrollment (Trust Bootstrapping)
 
 ### Step 1.1: User Initiates Enrollment
-**User Action**: Opens app → "Register Your Voice" → Reads 3 prompted phrases
+**User Action**: Opens SwarSatya app → "Register Your Voice" → Reads 3 prompted phrases
 
 **Example Prompts**:
 1. "My name is Devansh Chaturvedi and I authorize voice verification."
@@ -44,7 +48,7 @@ Permissions Requested:
 
 ### Step 1.2: Audio Capture & Preprocessing
 ```python
-# Pseudocode running on device
+# Pseudocode running on device (via Chaquopy)
 import torchaudio
 import numpy as np
 
@@ -60,7 +64,7 @@ segments = np.split(audio_normalized, 3)
 ```
 
 ### Step 1.3: Voiceprint Embedding Generation
-**Model**: Pre-trained speaker verification model (e.g., ECAPA-TDNN or Whisper encoder)
+**Model**: Pre-trained speaker verification model (ECAPA-TDNN)
 
 ```python
 import torch
@@ -101,7 +105,7 @@ vc_payload = {
     "issuer": account.address,
     "issuanceDate": "2026-09-08T23:49:00Z",
     "credentialSubject": {
-        "id": "did:key:z6MkhaXgBZDvotDkWL5TnGH4xvQR...",
+        "id": f"did:ethr:{account.address}",
         "voiceprintHash": "0x7f9a3b2c8e1d4f6a5b9c0e2d8f7a3b1c...",
         "algorithm": "ECAPA-TDNN-256",
         "enrollmentTimestamp": 1694237340
@@ -113,19 +117,15 @@ signature = account.sign_message(vc_payload)
 ```
 
 ### Step 1.5: Blockchain Registration (Zone 4)
-**Smart Contract Call**: `VoiceRegistry.registerVoiceprint()`
+**Smart Contract Call**: `SwarSatFraud.registerVoice()`
 
 ```solidity
-// Solidity Smart Contract (Hyperledger Fabric Chaincode or Polygon)
-function registerVoiceprint(
+// Solidity Smart Contract (Polygon Mumbai Testnet)
+function registerVoice(
+    string memory phoneNumber,
     string memory did,
-    bytes32 voiceprintHash,
-    bytes memory signature,
-    string memory phoneNumber
+    string memory voiceprintHash
 ) public {
-    // Verify signature matches DID public key
-    require(verifySignature(did, voiceprintHash, signature), "Invalid signature");
-    
     // Store in registry
     voiceRegistry[phoneNumber] = VoiceRecord({
         did: did,
@@ -139,8 +139,8 @@ function registerVoiceprint(
 ```
 
 **Transaction Details**:
-- **Network**: Polygon CDK L2 (for public) or Hyperledger Fabric channel (for enterprise)
-- **Gas Cost**: ~0.001 MATIC (negligible on L2)
+- **Network**: Polygon Mumbai Testnet
+- **Gas Cost**: ~0.001 MATIC (negligible on testnet)
 - **Finality**: ~1-2 seconds
 - **Tx Hash**: `0x3f8a2b9c7e1d5f4a6b8c0e3d9f2a7b5c...`
 
@@ -157,8 +157,6 @@ function registerVoiceprint(
 
 ```python
 # Android: BroadcastReceiver for CALL_STATE
-# iOS: CallKit CXProvider reportNewIncomingCall
-
 call_metadata = {
     "caller_number": "+91-98765-43210",
     "receiver_number": "+91-91234-56789",  # User's number
@@ -176,10 +174,10 @@ call_metadata = {
 from web3 import Web3
 
 # Connect to blockchain node
-w3 = Web3(Web3.HTTPProvider("https://polygon-rpc.com"))
+w3 = Web3(Web3.HTTPProvider("https://rpc-mumbai.maticvigil.com"))
 
 # Load smart contract
-contract = w3.eth.contract(address="0xVoiceRegistryAddress", abi=contract_abi)
+contract = w3.eth.contract(address="0xSwarSatFraudAddress", abi=contract_abi)
 
 # Query caller's voiceprint hash
 caller_number = "+91-98765-43210"
@@ -187,7 +185,7 @@ voice_record = contract.functions.getVoiceRecord(caller_number).call()
 
 # Output
 registered_voiceprint_hash = voice_record[0]  # 0x7f9a3b2c8e1d4f6a5b9c0e2d8f7a3b1c...
-registered_did = voice_record[1]  # did:key:z6MkhaXgBZDvotDkWL5TnGH4xvQR...
+registered_did = voice_record[1]  # did:ethr:0x742d35Cc...
 is_registered = voice_record[3]  # True
 ```
 
@@ -231,12 +229,12 @@ risk_assessment = assess_call_risk(caller_number, receiver_number, call_context)
 **Action**: Backend pushes registered voiceprint hash to user's device before call audio starts
 
 ```python
-# WebSocket push to mobile app
+# WebSocket push to SwarSatya app
 websocket_message = {
     "type": "PRE_CALL_VERIFICATION_DATA",
     "call_id": "call_8f3a2b9c7e1d",
     "caller_voiceprint_hash": "0x7f9a3b2c8e1d4f6a5b9c0e2d8f7a3b1c...",
-    "caller_did": "did:key:z6MkhaXgBZDvotDkWL5TnGH4xvQR...",
+    "caller_did": "did:ethr:0x742d35Cc...",
     "base_risk_score": 0.3,
     "risk_factors": ["UNKNOWN_CONTACT"],
     "cached_at": "2026-09-08T23:52:16Z"
@@ -257,7 +255,6 @@ cached_verification_data = websocket_message
 
 ```python
 # Android: AudioRecord with VOICE_COMMUNICATION source
-# iOS: AVAudioEngine input node tap
 
 import sounddevice as sd
 import numpy as np
@@ -316,11 +313,11 @@ session_options = ort.SessionOptions()
 session_options.intra_op_num_threads = 4
 session_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
 
-# Android: NNAPI delegate, iOS: CoreML delegate
+# Android: NNAPI delegate
 rawnet3_session = ort.InferenceSession(
     "rawnet3_quantized.onnx",
     sess_options=session_options,
-    providers=['QNNExecutionProvider']  # or 'CoreMLExecutionProvider'
+    providers=['QNNExecutionProvider']
 )
 
 def extract_spectral_features(audio_chunk):
@@ -465,11 +462,10 @@ alert_decision = evaluate_alert_condition(smoothed_risk, call_context)
 
 ```python
 # Android: SYSTEM_ALERT_WINDOW overlay
-# iOS: CallKit CXCallUpdate with custom UI
 
 if alert_decision['alert_level'] in ['WARNING', 'CRITICAL']:
     show_security_overlay(
-        title="Voice Integrity Alert",
+        title="SwarSatya - Voice Integrity Alert",
         message=alert_decision['message'],
         confidence_score=f"{alert_decision['confidence']*100:.1f}%",
         recommended_actions=[
@@ -485,7 +481,7 @@ if alert_decision['alert_level'] in ['WARNING', 'CRITICAL']:
 **Visual Output** (appears as heads-up notification over call screen):
 ```
 ┌─────────────────────────────────────────────┐
-│  ⚠️  VOICE INTEGRITY ALERT                  │
+│  ⚠️  SwarSatya - Voice Alert                │
 ├─────────────────────────────────────────────┤
 │  Unusual voice patterns detected            │
 │  Confidence: 73% synthetic                  │
@@ -516,8 +512,7 @@ def secure_memory_wipe(buffer):
     libc = ctypes.CDLL('libc.so.6')  # Linux/Android
     libc.memset_s(buffer_ptr, buffer_size, 0, buffer_size)
     
-    # Alternative for iOS: use memset_s from libSystem
-    # For Python: manually overwrite
+    # Alternative for Python: manually overwrite
     buffer[:] = 0
 
 # After inference completes
@@ -585,50 +580,40 @@ zk_proof = generate_proof(
 ```
 
 ### Step 4.3: Blockchain Fraud Log (Zone 4)
-**Smart Contract Call**: `FraudRegistry.logIncident()`
+**Smart Contract Call**: `SwarSatFraud.logFraud()`
 
 ```solidity
 // Smart contract function
-function logIncident(
-    bytes32 callerNumberHash,
+function logFraud(
+    string memory callerNumberHash,
     uint256 riskScore,
-    uint256 timestamp,
-    bytes memory zkProof
-) public {
-    FraudIncident memory incident = FraudIncident({
-        incidentId: keccak256(abi.encodePacked(callerNumberHash, timestamp)),
+    uint256 timestamp
+) public returns (uint256) {
+    incidentCount++;
+    
+    fraudLog[incidentCount] = FraudIncident({
+        incidentId: incidentCount,
         callerNumberHash: callerNumberHash,
         riskScore: riskScore,
         reportedAt: timestamp,
-        zkProof: zkProof,
         isVerified: true
     });
     
-    fraudLog.push(incident);
+    emit FraudLogged(incidentCount, riskScore, timestamp);
     
-    // Emit event for consortium members (banks, telcos)
-    emit FraudIncidentLogged(
-        callerNumberHash,
-        riskScore,
-        timestamp
-    );
-    
-    // Auto-blacklist if risk score > 0.85
-    if (riskScore > 85) {  // Scaled to 0-100
-        blacklistAddress(callerNumberHash);
-    }
+    return incidentCount;
 }
 ```
 
 **Transaction Details**:
-- **Network**: Hyperledger Fabric channel (private to banking consortium)
+- **Network**: Polygon Mumbai Testnet
 - **Tx Hash**: `0x9f2a7b5c3e1d8f4a6b0c9e2d7f3a5b8c...`
-- **Block Time**: ~500ms (Fabric) or ~2s (Polygon L2)
-- **Gas**: Negligible (permissioned chain)
+- **Block Time**: ~2s (Polygon L2)
+- **Gas**: Negligible (testnet)
 
 ### Step 4.4: Real-Time Blacklist Propagation (Zone 5)
 ```python
-# Kafka message to consortium members
+# Kafka message to consortium members (for enterprise deployment)
 kafka_message = {
     "topic": "fraud_alerts_realtime",
     "key": "caller_+91-98765-43210",
@@ -664,7 +649,7 @@ if call_context.get('transaction_pending'):
         json={
             "transaction_id": call_context['transaction_id'],
             "status": "LOCKED",
-            "reason": "AI voice cloning detected with 87% confidence"
+            "reason": "SwarSatya AI voice cloning detected with 87% confidence"
         }
     )
 ```
@@ -678,18 +663,17 @@ if call_context.get('transaction_pending'):
 
 ```python
 # Query blockchain for fraud incident
-incident_query = contract.functions.getFraudIncidentByHash(
-    sha256("+91-98765-43210")
+incident_query = contract.functions.getFraudIncident(
+    incident_id
 ).call()
 
 # Returns tamper-proof record
 audit_record = {
-    "incident_id": "0x9f2a7b5c3e1d8f4a6b0c9e2d7f3a5b8c...",
-    "caller_hash": "0x3f8a2b9c7e1d5f4a6b8c0e3d9f2a7b5c...",
+    "incident_id": 1,
+    "caller_hash": "0x3f8a2b9c...",
     "risk_score": 87,
     "detection_timestamp": "2026-09-08T23:53:42Z",
     "model_version": "rawnet3_v2.1_aasist_v1.8",
-    "zk_proof_verified": True,
     "blockchain_tx": "0x9f2a7b5c3e1d8f4a6b0c9e2d7f3a5b8c..."
 }
 
@@ -700,7 +684,7 @@ audit_record = {
 ```python
 # Generate DPDP Act / RBI compliance report
 compliance_report = {
-    "report_id": "FRAUD_2026_09_08_001",
+    "report_id": "SWARSATYA_FRAUD_2026_09_08_001",
     "incident_summary": {
         "total_fraud_attempts": 1,
         "detection_method": "AI voice cloning detection (RawNet3 + AASIST)",
@@ -709,7 +693,7 @@ compliance_report = {
     },
     "blockchain_audit": {
         "incident_hash": "0x9f2a7b5c3e1d8f4a6b0c9e2d7f3a5b8c...",
-        "verification_url": "https://polygonscan.com/tx/0x9f2a7b5c..."
+        "verification_url": "https://mumbai.polygonscan.com/tx/0x9f2a7b5c..."
     },
     "generated_at": "2026-09-09T00:15:00Z"
 }
@@ -727,67 +711,69 @@ export_compliance_pdf(compliance_report, output_path="fraud_report_2026_09_08.pd
 │                         PHASE 0-1: ENROLLMENT                               │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-User Device (Zone 1)                          Blockchain (Zone 4)
-     │                                             │
-     │ 1. Record voice samples                    │
-     │    (10 sec, 3 phrases)                     │
-     │                                             │
-     │ 2. Generate voiceprint embedding           │
-     │    (ECAPA-TDNN, 256-dim vector)            │
-     │                                             │
-     │ 3. Hash & sign with private key            │
-     │    (DID + cryptographic signature)         │
-     │                                             │
-     │────────────────────────────────────────────>│ 4. registerVoiceprint()
-     │    Tx: voiceprint hash + DID + phone       │    Smart Contract
-     │                                             │
-     │                                             │ 5. Store in registry
-     │                                             │    (immutable, timestamped)
-     │                                             │
-     │<────────────────────────────────────────────│ 6. Return tx hash
-     │    Confirmation: 0x3f8a2b9c...              │
-     │                                             │
+User Device (SwarSatya App)        Blockchain (Polygon Mumbai)
+     │                                     │
+     │ 1. Record voice samples            │
+     │    (10 sec, 3 phrases)             │
+     │                                     │
+     │ 2. Generate voiceprint embedding   │
+     │    (ECAPA-TDNN, 256-dim vector)    │
+     │                                     │
+     │ 3. Hash & sign with private key    │
+     │    (DID + cryptographic signature) │
+     │                                     │
+     │────────────────────────────────────>│ 4. registerVoice()
+     │    Tx: voiceprint hash + DID       │    Smart Contract
+     │    + phone                         │
+     │                                     │
+     │                                     │ 5. Store in registry
+     │                                     │    (immutable, timestamped)
+     │                                     │
+     │<────────────────────────────────────│ 6. Return tx hash
+     │    Confirmation: 0x3f8a2b9c...      │
+     │                                     │
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                      PHASE 2: PRE-CALL SETUP                                │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-User Device (Zone 1)      FastAPI Backend (Zone 3)      Blockchain (Zone 4)
-     │                          │                            │
-     │ Incoming call detected   │                            │
-     │ (+91-98765-43210)       │                            │
-     │                          │                            │
-     │─────────────────────────>│                            │
-     │ Call metadata           │                            │
-     │                          │                            │
-     │                          │ 1. Query voice registry    │
-     │                          │    (caller phone number)   │
-     │                          │───────────────────────────>│
-     │                          │                            │
-     │                          │<───────────────────────────│
-     │                          │ Voice record:              │
-     │                          │ - voiceprint hash          │
-     │                          │ - DID                      │
-     │                          │ - registration timestamp   │
-     │                          │                            │
-     │                          │ 2. Assess base risk        │
-     │                          │    (unknown contact, etc.) │
-     │                          │                            │
-     │<─────────────────────────│                            │
-     │ WebSocket push:         │                            │
-     │ - caller voiceprint hash│                            │
-     │ - base risk score       │                            │
-     │ - risk factors          │                            │
-     │                          │                            │
-     │ 3. Cache in RAM         │                            │
-     │    (pre-call, zero latency)                          │
-     │                          │                            │
+SwarSatya App      FastAPI Backend (Zone 3)      Blockchain (Zone 4)
+     │                    │                            │
+     │ Incoming call      │                            │
+     │ detected           │                            │
+     │ (+91-98765-43210)  │                            │
+     │                    │                            │
+     │───────────────────>│                            │
+     │ Call metadata     │                            │
+     │                    │                            │
+     │                    │ 1. Query voice registry    │
+     │                    │    (caller phone number)   │
+     │                    │───────────────────────────>│
+     │                    │                            │
+     │                    │<───────────────────────────│
+     │                    │ Voice record:              │
+     │                    │ - voiceprint hash          │
+     │                    │ - DID                      │
+     │                    │ - registration timestamp   │
+     │                    │                            │
+     │                    │ 2. Assess base risk        │
+     │                    │    (unknown contact, etc.) │
+     │                    │                            │
+     │<───────────────────│                            │
+     │ WebSocket push:   │                            │
+     │ - caller voiceprint hash                        │
+     │ - base risk score │                            │
+     │ - risk factors    │                            │
+     │                    │                            │
+     │ 3. Cache in RAM   │                            │
+     │    (pre-call, zero latency)                    │
+     │                    │                            │
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                   PHASE 3: REAL-TIME CALL MONITORING                        │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-User Device (Zone 1) - On-Device NPU Pipeline
+SwarSatya App (Zone 1) - On-Device NPU Pipeline
 
      │
      │ [Audio Stream: 16kHz PCM]
@@ -826,7 +812,7 @@ User Device (Zone 1) - On-Device NPU Pipeline
 │                 │ │                 │
 │  Log-Mel Spec   │ │  LFCC + Delta   │
 │  INT8 Quantized │ │  INT8 Quantized │
-│  QNN/CoreML     │ │  QNN/CoreML     │
+│  QNN            │ │  QNN            │
 │                 │ │                 │
 │  Output:        │ │  Output:        │
 │  spoof_score_A  │ │  spoof_score_B  │
@@ -868,7 +854,7 @@ User Device (Zone 1) - On-Device NPU Pipeline
          │           │  In-Call Overlay    │
          │           │  (SYSTEM_ALERT)     │
          │           │                     │
-         │           │  ⚠️ Synthetic Voice │
+         │           │  ⚠️ SwarSatya Alert │
          │           │  Confidence: 87%    │
          │           │                     │
          │           │  [End Call]         │
@@ -892,49 +878,51 @@ User Device (Zone 1) - On-Device NPU Pipeline
 │                    PHASE 4: POST-DETECTION RESPONSE                         │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-User Device (Zone 1)      FastAPI Backend (Zone 3)      Blockchain (Zone 4)
-     │                          │                            │
-     │ User clicks              │                            │
-     │ "Report Fraud"          │                            │
-     │                          │                            │
-     │ 1. End call             │                            │
-     │    (programmatic hangup)│                            │
-     │                          │                            │
-     │ 2. Generate zk-proof    │                            │
-     │    (fraud statement,    │                            │
-     │     no raw audio)       │                            │
-     │                          │                            │
-     │─────────────────────────>│                            │
-     │ Fraud incident data     │                            │
-     │ (risk score, timestamp, │                            │
-     │  caller hash, zk-proof) │                            │
-     │                          │                            │
-     │                          │ 3. Log to blockchain       │
-     │                          │    logIncident()           │
-     │                          │───────────────────────────>│
-     │                          │                            │
-     │                          │                            │ 4. Store incident
-     │                          │                            │    (immutable)
-     │                          │                            │
-     │                          │                            │ 5. Auto-blacklist
-     │                          │                            │    if risk > 0.85
-     │                          │                            │
-     │                          │<───────────────────────────│
-     │                          │ Tx hash: 0x9f2a7b5c...     │
-     │                          │                            │
-     │                          │                            │
-     │                          │ 6. Kafka broadcast         │
-     │                          │    (consortium members)    │
-     │                          │───────────────────────────>│
-     │                          │                            │
-     │                          │    [Banks/Telcos receive   │
-     │                          │     real-time alert]       │
-     │                          │                            │
-     │<─────────────────────────│                            │
-     │ Confirmation:            │                            │
-     │ "Fraud reported,         │                            │
-     │  incident logged"        │                            │
-     │                          │                            │
+SwarSatya App      FastAPI Backend (Zone 3)      Blockchain (Zone 4)
+     │                    │                            │
+     │ User clicks        │                            │
+     │ "Report Fraud"    │                            │
+     │                    │                            │
+     │ 1. End call       │                            │
+     │    (programmatic  │                            │
+     │     hangup)       │                            │
+     │                    │                            │
+     │ 2. Generate       │                            │
+     │    fraud data     │                            │
+     │                    │                            │
+     │───────────────────>│                            │
+     │ Fraud incident    │                            │
+     │ data              │                            │
+     │ (risk score,      │                            │
+     │  timestamp,       │                            │
+     │  caller hash)     │                            │
+     │                    │                            │
+     │                    │ 3. Log to blockchain       │
+     │                    │    logFraud()              │
+     │                    │───────────────────────────>│
+     │                    │                            │
+     │                    │                            │ 4. Store incident
+     │                    │                            │    (immutable)
+     │                    │                            │
+     │                    │                            │ 5. Auto-blacklist
+     │                    │                            │    if risk > 0.85
+     │                    │                            │
+     │                    │<───────────────────────────│
+     │                    │ Tx hash: 0x9f2a7b5c...     │
+     │                    │                            │
+     │                    │                            │
+     │                    │ 6. Kafka broadcast         │
+     │                    │    (consortium members)    │
+     │                    │───────────────────────────>│
+     │                    │                            │
+     │                    │    [Banks/Telcos receive   │
+     │                    │     real-time alert]       │
+     │                    │                            │
+     │<───────────────────│                            │
+     │ Confirmation:     │                            │
+     │ "Fraud reported,  │                            │
+     │  incident logged" │                            │
+     │                    │                            │
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                    PHASE 5: FORENSIC AUDIT                                  │
@@ -943,7 +931,7 @@ User Device (Zone 1)      FastAPI Backend (Zone 3)      Blockchain (Zone 4)
 Bank Fraud Team                Blockchain (Zone 4)
      │                              │
      │ 1. Query incident by         │
-     │    caller number hash        │
+     │    incident ID               │
      │─────────────────────────────>│
      │                              │
      │<─────────────────────────────│
@@ -952,7 +940,6 @@ Bank Fraud Team                Blockchain (Zone 4)
      │ - risk_score: 87             │
      │ - detection_time             │
      │ - model_version              │
-     │ - zk_proof_verified: true    │
      │ - blockchain_tx hash         │
      │                              │
      │ 2. Generate compliance       │
@@ -972,12 +959,12 @@ Bank Fraud Team                Blockchain (Zone 4)
 |--------|--------|-------------|
 | **End-to-End Inference Latency** | <200ms per 1-sec chunk | From audio capture to alert decision |
 | **VAD Processing Time** | <10ms | Silero VAD on CPU |
-| **RawNet3 Inference (NPU)** | <40ms | INT8 quantized, QNN/CoreML |
-| **AASIST Inference (NPU)** | <40ms | INT8 quantized, QNN/CoreML |
+| **RawNet3 Inference (NPU)** | <40ms | INT8 quantized, QNN |
+| **AASIST Inference (NPU)** | <40ms | INT8 quantized, QNN |
 | **Risk Score Smoothing** | <5ms | Rolling EMA computation |
 | **Alert Overlay Display** | <100ms | From decision to UI render |
 | **Memory Zeroization** | <1ms | memset_s + gc.collect |
-| **Blockchain Tx Finality** | <2s (Polygon L2), <500ms (Fabric) | From logIncident() to block confirmation |
+| **Blockchain Tx Finality** | <2s (Polygon Mumbai) | From logFraud() to block confirmation |
 | **Consortium Blacklist Propagation** | <1s | Kafka message delivery |
 | **Battery Impact** | <2.5% per hour of call | Measured on mid-range Android device |
 | **False Positive Rate** | <5% | On telephony-degraded audio (AMR/G.711) |
@@ -993,22 +980,22 @@ Bank Fraud Team                Blockchain (Zone 4)
 - ✅ **GDPR Article 9 Compliant**: Special category data (biometrics) processed with explicit consent
 - ✅ **Encryption in Transit**: WebSocket/TLS 1.3 for pre-call hash caching
 - ✅ **Encryption at Rest**: Private keys stored in Android Keystore / iOS Keychain
-- ✅ **Immutable Audit Trail**: All fraud incidents logged to blockchain with zk-proofs
+- ✅ **Immutable Audit Trail**: All fraud incidents logged to blockchain
 - ✅ **Consortium Data Sharing**: Real-time blacklist propagation without exposing raw data
 - ✅ **User Consent**: Explicit opt-in during app installation and enrollment
-- ✅ **Right to Deletion**: Users can revoke DID and delete voiceprint from blockchain (via smart contract self-destruct)
+- ✅ **Right to Deletion**: Users can revoke access and delete data from app
 
 ---
 
 ## Next Steps for Implementation
 
 1. **Model Training Pipeline**: Set up PyTorch training with ASVspoof 2021 + In-the-Wild datasets, augmented with telephony codec simulation (Audiomentations)
-2. **Mobile App Development**: Build Kotlin/Swift wrappers for ONNX Runtime Mobile + CoreML
-3. **Smart Contract Development**: Write Solidity/Rust contracts for voice registry and fraud logging
+2. **Mobile App Development**: Build Kotlin app with Chaquopy for ONNX Runtime Mobile integration
+3. **Smart Contract Development**: Write Solidity contracts for SwarSatFraud on Polygon Mumbai
 4. **Backend API**: Implement FastAPI microservices for session management and blockchain integration
-5. **Telephony Integration**: Develop SIP/WebRTC hooks for enterprise call center deployment
-6. **Privacy Audit**: Engage legal counsel for DPDP Act / GDPR compliance review
-7. **Pilot Deployment**: Partner with 1-2 banks for controlled pilot (inbound customer service calls)
+5. **Dashboard**: Build Streamlit dashboard for real-time fraud monitoring
+6. **Privacy Audit**: Engage legal counsel for DPDP Act / RBI compliance review
+7. **Pilot Deployment**: Test with sample calls and demo scenarios
 
 ---
 
@@ -1017,8 +1004,15 @@ Bank Fraud Team                Blockchain (Zone 4)
 - **ASVspoof 2021 Dataset**: https://www.asvspoof.org/
 - **RawNet3 Paper**: https://arxiv.org/abs/2104.01384
 - **AASIST Paper**: https://arxiv.org/abs/2110.06166
-- **W3C DID Specification**: https://www.w3.org/TR/did-core/
-- **Hyperledger Fabric Docs**: https://hyperledger-fabric.readthedocs.io/
+- **Polygon Mumbai Testnet**: https://mumbai.polygonscan.com/
 - **ONNX Runtime Mobile**: https://onnxruntime.ai/docs/get-started/
 - **Silero VAD**: https://github.com/snakers4/silero-vad
 - **India DPDP Act 2023**: https://www.meity.gov.in/writereaddata/files/11082023155321Digital%20Personal%20Data%20Protection%20Bill%202023.pdf
+- **Smart India Hackathon 2026**: https://www.sih.gov.in/
+
+---
+
+**Project**: SwarSatya (स्वरसत्य)  
+**Tagline**: "सत्य की आवाज़" (The Voice of Truth)  
+**Hackathon**: SIH 2026 - Blockchain & Cybersecurity  
+**Status**: Ready for Implementation 🚀
