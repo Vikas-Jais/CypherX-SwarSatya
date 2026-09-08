@@ -1,4 +1,13 @@
-# Complete Tech Stack: VoiceShield (SIH 2026)
+# Complete Tech Stack: SwarSatya (स्वरसत्य) - SIH 2026
+
+## Project Name: SwarSatya (स्वरसत्य)
+**Meaning**: "Voice Truth" - Detecting AI voice cloning fraud in real-time
+
+**Theme**: Blockchain & Cybersecurity  
+**Team**: [Your Team Name]  
+**Hackathon**: Smart India Hackathon 2026
+
+---
 
 ## Core Philosophy
 **Python-Centric Architecture**: All major components are Python-based, with minimal native code (Kotlin/Swift) only where absolutely necessary for OS-level hooks.
@@ -89,6 +98,7 @@
 | **UI Framework** | Jetpack Compose | 1.5+ | Modern declarative UI | AndroidX library |
 | **Overlay Permission** | SYSTEM_ALERT_WINDOW | API 23+ | Show fraud alert over other apps | Android manifest permission |
 | **Background Service** | Android Foreground Service | API 26+ | Keep detection running during call | Android manifest |
+| **App Package Name** | `com.swarsatya.app` | N/A | Unique Android application ID | Configure in `build.gradle` |
 
 ---
 
@@ -102,6 +112,7 @@
 | **Data Tables** | Pandas | 2.1+ | Data manipulation, CSV export | `pip install pandas` |
 | **UI Components** | Streamlit Components | Built-in | Buttons, sliders, file uploaders | Built-in Streamlit |
 | **Real-Time Updates** | Streamlit Auto-Rerun | Built-in | Auto-refresh dashboard every 5 seconds | `st.autorun()` |
+| **Dashboard Title** | "SwarSatya Fraud Dashboard" | N/A | Branding for judging | Configure in `st.set_page_config()` |
 
 ---
 
@@ -111,10 +122,14 @@
 |-----------|------------|---------|---------|--------------|
 | **Version Control** | Git | 2.40+ | Code versioning, collaboration | Pre-installed on most systems |
 | **Code Hosting** | GitHub | N/A | Private repo during hackathon | Free account |
+| **GitHub Repo Name** | `swarsatya-sih2026` | N/A | Repository identifier | Create on GitHub |
 | **Backend Hosting** | Railway | N/A | Deploy FastAPI backend (free tier) | CLI: `npm i -g railway` |
+| **Backend Service Name** | `swarsatya-backend` | N/A | Railway service identifier | Configure in Railway dashboard |
 | **Alternative Hosting** | Render | N/A | Another free backend hosting option | Web dashboard |
 | **Dashboard Hosting** | Streamlit Cloud | N/A | Free hosting for Streamlit apps | GitHub integration |
+| **Dashboard App Name** | `swarsatya-dashboard` | N/A | Streamlit Cloud app identifier | Configure in Streamlit Cloud |
 | **Containerization** | Docker | 24.0+ | Package backend for consistent deployment | Docker Desktop |
+| **Docker Image Name** | `swarsatya-backend:latest` | N/A | Container image tag | Configure in Dockerfile |
 | **CI/CD** | GitHub Actions | N/A | Auto-deploy on push to main branch | `.github/workflows/deploy.yml` |
 | **Environment Management** | Python venv | Built-in | Isolate project dependencies | `python -m venv venv` |
 | **Dependency Management** | Pip | 23.3+ | Install Python packages | Built-in Python |
@@ -192,6 +207,7 @@
 | Component | Technology | Version | Purpose | Installation |
 |-----------|------------|---------|---------|--------------|
 | **Documentation** | Markdown | N/A | README, docs, demo script | Any text editor |
+| **Project Logo** | Canva / Figma | N/A | Create SwarSatya logo (optional) | Browser-based |
 | **Diagram Tool** | Draw.io | N/A | Create architecture diagrams | Browser-based |
 | **Alternative** | Excalidraw | N/A | Hand-drawn style diagrams | Browser-based |
 | **Presentation** | Google Slides | N/A | Pitch deck for judging | Free account |
@@ -203,6 +219,9 @@
 ## Complete requirements.txt (Copy-Paste Ready)
 
 ```txt
+# SwarSatya - SIH 2026
+# Complete Python dependencies
+
 # Core ML & Audio
 torch==2.1.0
 torchaudio==2.1.0
@@ -214,7 +233,7 @@ silero-vad==0.4.0
 audiomentations==0.17.0
 transformers==4.35.0
 
-# Backend
+# Backend (FastAPI)
 fastapi==0.104.1
 uvicorn==0.24.0
 pydantic==2.5.0
@@ -222,7 +241,7 @@ websockets==12.0
 python-jose==3.0.1
 passlib==1.7.4
 
-# Blockchain
+# Blockchain (Web3)
 web3==6.11.0
 eth-account==0.6.0
 eth-keys==0.3.0
@@ -232,7 +251,7 @@ sqlalchemy==2.0.23
 redis==5.0.1
 pandas==2.1.3
 
-# Dashboard
+# Dashboard (Streamlit)
 streamlit==1.28.0
 plotly==5.18.0
 
@@ -274,22 +293,27 @@ seaborn==0.13.0
 ## Installation Commands (Quick Setup)
 
 ```bash
-# 1. Create virtual environment
+# 1. Create project directory
+mkdir swarsatya-sih2026
+cd swarsatya-sih2026
+
+# 2. Create virtual environment
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 # or
 venv\Scripts\activate  # Windows
 
-# 2. Install all dependencies
+# 3. Install all dependencies
 pip install -r requirements.txt
 
-# 3. Install PyTorch with CUDA (for GPU acceleration)
+# 4. Install PyTorch with CUDA (for GPU acceleration)
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
-# 4. Verify installation
-python -c "import torch; print(torch.__version__)"
-python -c "import fastapi; print(fastapi.__version__)"
-python -c "import web3; print(web3.__version__)"
+# 5. Verify installation
+python -c "import torch; print(f'✅ PyTorch {torch.__version__}')"
+python -c "import fastapi; print(f'✅ FastAPI {fastapi.__version__}')"
+python -c "import web3; print(f'✅ Web3.py {web3.__version__}')"
+python -c "import streamlit; print(f'✅ Streamlit {streamlit.__version__}')"
 ```
 
 ---
@@ -300,7 +324,7 @@ python -c "import web3; print(web3.__version__)"
 |-----------|---------|-------------|
 | **Development Machine** | 8GB RAM, i5/Ryzen 5 | 16GB RAM, i7/Ryzen 7, RTX 3060+ |
 | **Android Phone** | 4GB RAM, Snapdragon 665 | 6GB RAM, Snapdragon 778G+ (NPU support) |
-| **Backend Hosting** | Railway Free (512MB RAM) | Railway Hobby ($5/mo, 2GB RAM) |
+| **Backend Hosting** | Railway Free (512MB RAM) | Railway Hobby (₹400/mo, 2GB RAM) |
 | **Blockchain** | Polygon Mumbai Testnet (free) | Polygon Mumbai Testnet (free) |
 
 ---
@@ -321,7 +345,103 @@ python -c "import web3; print(web3.__version__)"
 
 ## Tech Stack Summary (One-Liner)
 
-> "Python 3.11 + FastAPI backend, PyTorch/ONNX for on-device AI, Polygon blockchain for immutable logs, Streamlit dashboard, Kotlin/Chaquopy for Android app with native Python ML inference."
+> "**SwarSatya**: Python 3.11 + FastAPI backend, PyTorch/ONNX for on-device AI, Polygon blockchain for immutable logs, Streamlit dashboard, Kotlin/Chaquopy for Android app with native Python ML inference."
+
+---
+
+## GitHub Repo Structure (Updated)
+
+```
+swarsatya-sih2026/
+├── README.md                    # Project overview, setup instructions
+├── requirements.txt             # All Python dependencies
+├── .gitignore                  # Git ignore rules
+├── LICENSE                      # MIT License (recommended)
+│
+├── android-app/                 # SwarSatya Android Application
+│   ├── app/
+│   │   ├── src/main/java/com/swarsatya/
+│   │   │   ├── MainActivity.kt
+│   │   │   ├── VoiceDetectionService.kt
+│   │   │   └── AlertOverlay.kt
+│   │   ├── src/main/res/       # App icons, layouts
+│   │   └── build.gradle        # Chaquopy, ONNX Runtime deps
+│   └── models/
+│       └── rawnet3_quantized.onnx
+│
+├── backend/                     # FastAPI Backend
+│   ├── main.py                 # FastAPI app entry point
+│   ├── models.py               # Pydantic models
+│   ├── web3_integration.py     # Blockchain interactions
+│   ├── contracts/
+│   │   └── SwarSatFraud.sol    # Smart contract
+│   ├── requirements.txt        # Backend-specific deps
+│   └── Dockerfile              # Container config
+│
+├── dashboard/                   # Streamlit Dashboard
+│   ├── app.py                  # Dashboard entry point
+│   ├── requirements.txt        # Dashboard-specific deps
+│   └── assets/
+│       └── swarsatya_logo.png  # Optional logo
+│
+├── ml/                          # Machine Learning
+│   ├── train.py                # Model training script
+│   ├── inference.py            # Inference pipeline
+│   └── models/
+│       └── rawnet3_pretrained.pth
+│
+├── docs/                        # Documentation
+│   ├── architecture.pdf        # System architecture diagram
+│   ├── demo_script.md          # Live demo script
+│   ├── presentation.pdf        # SIH pitch deck
+│   └── api_docs.md             # API documentation
+│
+└── tests/                       # Test Suite
+    ├── test_backend.py         # Backend unit tests
+    ├── test_blockchain.py      # Smart contract tests
+    └── test_ml.py              # ML inference tests
+```
+
+---
+
+## Branding Guidelines (Optional but Recommended)
+
+### **Logo Concept**
+- **Visual**: Sound wave + blockchain block + checkmark
+- **Colors**: 
+  - Primary: Deep Blue (#1E3A8A) - Trust, Security
+  - Secondary: Orange (#F97316) - Energy, Innovation
+  - Accent: Green (#10B981) - Safety, Verification
+
+### **App Icon**
+- **Style**: Material Design 3 (Android)
+- **Shape**: Rounded square
+- **Symbol**: Abstract sound wave with shield
+
+### **Dashboard Theme**
+```python
+# Streamlit config (dashboard/app.py)
+st.set_page_config(
+    page_title="SwarSatya - Fraud Dashboard",
+    page_icon="🎯",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Custom CSS for branding
+st.markdown("""
+<style>
+    .stApp {
+        background-color: #f8f9fa;
+    }
+    .header {
+        color: #1E3A8A;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+</style>
+""", unsafe_allow_html=True)
+```
 
 ---
 
@@ -333,49 +453,26 @@ python -c "import web3; print(web3.__version__)"
 4. **Day 4**: Deploy smart contract to Mumbai testnet via Remix
 5. **Day 5**: Build Android app skeleton with audio capture
 6. **Day 6**: Integrate ONNX model into Android app
-7. **Day 7**: Build Streamlit dashboard
+7. **Day 7**: Build Streamlit dashboard with SwarSatya branding
 8. **Day 8**: End-to-end testing, demo rehearsal
 
 ---
 
-## GitHub Repo Structure
+## Project Slogan Options
 
-```
-voiceshield-sih2026/
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── android-app/
-│   ├── app/
-│   │   ├── src/main/java/com/voiceshield/
-│   │   ├── src/main/res/
-│   │   └── build.gradle
-│   └── models/
-│       └── rawnet3_quantized.onnx
-├── backend/
-│   ├── main.py
-│   ├── models.py
-│   ├── web3_integration.py
-│   ├── contracts/
-│   │   └── VoiceFraudDetection.sol
-│   └── requirements.txt
-├── dashboard/
-│   ├── app.py
-│   └── requirements.txt
-├── ml/
-│   ├── train.py
-│   ├── inference.py
-│   └── models/
-│       └── rawnet3_pretrained.pth
-├── docs/
-│   ├── architecture.pdf
-│   ├── demo_script.md
-│   └── presentation.pdf
-└── tests/
-    ├── test_backend.py
-    └── test_blockchain.py
-```
+Choose one for your presentation:
+
+1. **"स्वरसत्य: सत्य की आवाज़"** (SwarSatya: The Voice of Truth)
+2. **"Detecting Deepfakes, Defending Trust"**
+3. **"Your Voice, Verified"**
+4. **"Real-Time Voice Cloning Detection for India"**
+5. **"AI vs AI: Fighting Voice Cloning with Voice Detection"**
 
 ---
 
 This tech stack is **100% Python-centric**, hackathon-ready, and costs **₹0** to run. All tools are open-source with active communities and extensive documentation.
+
+**Project Name**: SwarSatya (स्वरसत्य)  
+**Theme**: Blockchain & Cybersecurity  
+**Hackathon**: Smart India Hackathon 2026  
+**Status**: Ready to Build 🚀
