@@ -4,7 +4,7 @@
 **Meaning**: "Voice Truth" - Detecting AI voice cloning fraud in real-time
 
 **Theme**: Blockchain & Cybersecurity  
-**Team**: [Your Team Name]  
+**Team**: CypherX 
 **Hackathon**: Smart India Hackathon 2026
 
 ---
