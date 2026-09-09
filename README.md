@@ -225,28 +225,43 @@ def assess_call_risk(caller_number, receiver_number, context):
 risk_assessment = assess_call_risk(caller_number, receiver_number, call_context)
 ```
 
-### Step 2.4: Voice-Hash Pre-Caching to Device
-**Action**: Backend pushes registered voiceprint hash to user's device before call audio starts
+# Step 2.4: Secure Voice-Hash Pre-Caching (WITH SIGNATURE)
 
-```python
-# WebSocket push to SwarSatya app
-websocket_message = {
+# Backend generates signed token
+verification_token = {
     "type": "PRE_CALL_VERIFICATION_DATA",
     "call_id": "call_8f3a2b9c7e1d",
+    "caller_number": "+91-98765-43210",
     "caller_voiceprint_hash": "0x7f9a3b2c8e1d4f6a5b9c0e2d8f7a3b1c...",
     "caller_did": "did:ethr:0x742d35Cc...",
+    "backend_signature": "0x8a3b2c9d7e1f5a4b6c8d0e2f7a3b5c9d...",  # 65-byte signature
+    "timestamp": "2026-09-08T23:52:16Z",
+    "expiry": "2026-09-08T23:57:16Z",  # 5-minute validity
     "base_risk_score": 0.3,
-    "risk_factors": ["UNKNOWN_CONTACT"],
-    "cached_at": "2026-09-08T23:52:16Z"
+    "risk_factors": ["UNKNOWN_CONTACT"]
 }
 
-# Mobile app receives and caches in RAM
+# Device receives and caches
 cached_verification_data = websocket_message
-```
 
-**Why This Matters**: By pre-caching the hash during call signaling (before audio flows), the device eliminates network latency during real-time inference. This is critical for maintaining sub-200ms detection latency.
+# Device verifies before call
+is_valid, message = verify_verification_token(cached_verification_data)
 
----
+if is_valid:
+    print("✅ Verification token valid - using cached hash")
+    start_call_monitoring(cached_verification_data["caller_voiceprint_hash"])
+else:
+    print(f"⚠️ Verification failed: {message}")
+    print("📡 Fetching fresh hash from blockchain...")
+    
+    # Fallback to blockchain
+    voiceprint_hash = fetch_from_blockchain("+91-98765-43210")
+    
+    if voiceprint_hash:
+        start_call_monitoring(voiceprint_hash)
+    else:
+        # No voiceprint registered - AI-only mode
+        start_ai_only_monitoring()
 
 ## Phase 3: Real-Time Call Monitoring (Zone 1 Execution)
 
